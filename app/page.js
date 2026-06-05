@@ -14,16 +14,10 @@ export default function EcoPulseMap() {
     const mapRef = useRef(null);
     const [hoverInfo, setHoverInfo] = useState(null);
 
-    // fetch data
     const { climateData, featuresRef, error } = useClimateData();
-
-    // init midi control
     const { midiStatus, lastCc } = useMidiControl(mapRef, featuresRef, setHoverInfo);
-
-    // init pd audio hook
     const { isAudioReady, isScriptLoaded, loadStatus, initAudio, sendPm25ToPd } = usePdAudio();
 
-    // watch for station hopping and sending data to pd
     useEffect(() => {
         if (isAudioReady && hoverInfo && hoverInfo.feature) {
             const currentPm25 = hoverInfo.feature.properties.pm25;
@@ -31,7 +25,6 @@ export default function EcoPulseMap() {
         }
     }, [hoverInfo, isAudioReady]);
 
-    // hover interactions
     const onHover = (event) => {
         const { features, point: { x, y } } = event;
         const hoveredFeature = features && features.find(f => f.layer.id === 'sensor-points');
@@ -89,7 +82,6 @@ export default function EcoPulseMap() {
                 </div>
             </div>
 
-            {/* pd4web required DOM elements — hidden but must exist in the DOM */}
             <canvas
                 id="Pd4WebCanvas"
                 tabIndex={-1}

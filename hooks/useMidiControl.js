@@ -3,11 +3,11 @@ import { CC_ZOOM_KNOB, CC_STATION_KNOB, MIN_MIDI_ZOOM, MAX_MIDI_ZOOM } from '../
 
 export function useMidiControl(mapRef, featuresRef, setHoverInfo) {
     const [midiStatus, setMidiStatus] = useState("disconnected");
-    const [lastCc, setLastCc] = useState(null); // New state to track CC number
+    const [lastCc, setLastCc] = useState(null);
 
     const currentIndexRef = useRef(0);
     const prevCcValuesRef = useRef({});
-    const lastCcRef = useRef(null); // Ref to prevent excessive re-renders
+    const lastCcRef = useRef(null);
 
     const navigateToStationIndex = (index) => {
         const features = featuresRef.current;
@@ -31,7 +31,7 @@ export function useMidiControl(mapRef, featuresRef, setHoverInfo) {
             return;
         }
 
-        let isMounted = true; // Protects against React Fast-Refresh race conditions
+        let isMounted = true;
         let activeInputs = [];
         let lastEventTime = 0;
 
@@ -44,17 +44,14 @@ export function useMidiControl(mapRef, featuresRef, setHoverInfo) {
             const ccNumber = data1;
             const ccValue = data2;
 
-            // Update UI with the current CC knob being turned (throttled to avoid lag)
             if (lastCcRef.current !== ccNumber) {
                 lastCcRef.current = ccNumber;
                 setLastCc(ccNumber);
             }
 
-            // Anti-Jitter Throttle
             const now = Date.now();
             if (now - lastEventTime < 50) return; 
 
-            // Zoom Knob Logic
             if (ccNumber === CC_ZOOM_KNOB && mapRef.current) {
                 const prevValue = prevCcValuesRef.current[ccNumber];
                 prevCcValuesRef.current[ccNumber] = ccValue;
@@ -70,7 +67,6 @@ export function useMidiControl(mapRef, featuresRef, setHoverInfo) {
                 }
             }
 
-            // Station Hopping Logic
             if (ccNumber === CC_STATION_KNOB) {
                 const features = featuresRef.current;
                 if (!features || features.length === 0) return;
@@ -94,17 +90,15 @@ export function useMidiControl(mapRef, featuresRef, setHoverInfo) {
         }
 
         navigator.requestMIDIAccess().then((midiAccess) => {
-            if (!isMounted) return; // Abort if React unmounted while waiting
+            if (!isMounted) return;
 
             setMidiStatus("midi status ready for CC");
 
-            // Attach to already connected devices
             for (let input of midiAccess.inputs.values()) {
                 input.onmidimessage = handleMidiMessage;
                 activeInputs.push(input);
             }
 
-            // Attach to devices plugged in AFTER the page loads
             midiAccess.onstatechange = (e) => {
                 setMidiStatus(`${e.port.name} is ${e.port.state}`);
                 if (e.port.type === "input" && e.port.state === "connected") {
@@ -116,7 +110,6 @@ export function useMidiControl(mapRef, featuresRef, setHoverInfo) {
             if (isMounted) setMidiStatus("midi hardware failure");
         });
 
-        // Cleanup: remove listeners and flag as unmounted
         return () => {
             isMounted = false;
             activeInputs.forEach(input => {
@@ -125,6 +118,5 @@ export function useMidiControl(mapRef, featuresRef, setHoverInfo) {
         };
     }, [mapRef, featuresRef, setHoverInfo]);
 
-    // Export both the status and the last used CC
     return { midiStatus, lastCc };
 }
