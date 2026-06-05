@@ -1,9 +1,0 @@
-{
-	"InstallScripts" : 
-	[
-		"C:/pd-build/.build/cmake_install.cmake",
-		"C:/pd-build/.build/nanovg-build/cmake_install.cmake",
-		"C:/pd-build/.build/Pd4Web/Externals/pdlua/cmake_install.cmake"
-	],
-	"Parallel" : false
-}
