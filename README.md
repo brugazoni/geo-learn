@@ -1,4 +1,4 @@
-<img width="1740" height="841" alt="image" src="https://github.com/user-attachments/assets/4d354cca-0fab-4894-8d0c-bd3f1e173d74" />AirPulse is an experience in sonification of air quality.
+AirPulse is an experience in sonification of air quality.
 <img width="1740" height="841" alt="image" src="https://github.com/user-attachments/assets/61d43160-30c2-42d5-a7a1-f5008f002e49" />
 
 It calls on OpenAQ and WAQI data for pm2.5 indices, cleans up and stores the timestamped data in an sqlite database via an ETL python pipeline.
