@@ -39,3 +39,16 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# pd4web build artifacts
+public/audio/.build/
+public/audio/Pd4Web/
+public/audio/WebPatch/
+
+# pd4web standalone files (not used by Next.js app)
+public/audio/index.html
+public/audio/manifest.json
+public/audio/pd4web.sw.js
+public/audio/favicon.ico
+public/audio/icon-192.png
+public/audio/icon-512.png

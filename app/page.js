@@ -20,8 +20,8 @@ export default function EcoPulseMap() {
     // init midi control
     const { midiStatus, lastCc } = useMidiControl(mapRef, featuresRef, setHoverInfo);
 
-    // init pd audio hook - NOW EXTRACTING isScriptLoaded
-    const { isAudioReady, isScriptLoaded, initAudio, sendPm25ToPd } = usePdAudio();
+    // init pd audio hook
+    const { isAudioReady, isScriptLoaded, loadStatus, initAudio, sendPm25ToPd } = usePdAudio();
 
     // watch for station hopping and sending data to pd
     useEffect(() => {
@@ -62,7 +62,7 @@ export default function EcoPulseMap() {
                     </h1>
                     <button 
                         onClick={initAudio}
-                        disabled={!isScriptLoaded} // Lock the button if not loaded
+                        disabled={!isScriptLoaded}
                         style={{
                             padding: '15px 30px', fontSize: '1.2rem', 
                             cursor: isScriptLoaded ? 'pointer' : 'not-allowed',
@@ -73,7 +73,7 @@ export default function EcoPulseMap() {
                             transition: 'background-color 0.3s'
                         }}
                     >
-                        {isScriptLoaded ? "CLICK TO INITIALIZE AUDIO" : "LOADING AUDIO FILES..."}
+                        {isScriptLoaded ? "CLICK TO INITIALIZE AUDIO" : loadStatus.toUpperCase()}
                     </button>
                 </div>
             )}
@@ -88,6 +88,31 @@ export default function EcoPulseMap() {
                     <strong>Last CC:</strong> {lastCc !== null ? `Knob ${lastCc}` : "None"}
                 </div>
             </div>
+
+            {/* pd4web required DOM elements — hidden but must exist in the DOM */}
+            <canvas
+                id="Pd4WebCanvas"
+                tabIndex={-1}
+                style={{
+                    position: 'absolute',
+                    width: 0,
+                    height: 0,
+                    opacity: 0,
+                    pointerEvents: 'none',
+                    zIndex: -1,
+                }}
+            />
+            <span
+                id="Pd4WebAudioSwitch"
+                style={{
+                    position: 'absolute',
+                    width: 0,
+                    height: 0,
+                    opacity: 0,
+                    pointerEvents: 'none',
+                    zIndex: -1,
+                }}
+            />
 
             <Map
                 ref={mapRef}
